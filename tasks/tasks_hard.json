@@ -1,0 +1,1503 @@
+[
+ {
+  "task_id": "ton_flicker_hard_1",
+  "family": "ton_flicker",
+  "title": "On-delay timer with a one-cycle dropout",
+  "scl": "fbDelay(IN := bSensor, PT := T#30MS);\nbReady := fbDelay.Q;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": false
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": true
+   },
+   {
+    "bSensor": false
+   }
+  ],
+  "outputs": [
+   "bReady",
+   "fbDelay.ET"
+  ],
+  "initial": {
+   "bReady": false
+  },
+  "trap": "TON restarts from zero when IN is FALSE for a single cycle; ET only counts from the cycle where IN became TRUE again.",
+  "expected": [
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 10
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 10
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 10
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 20
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 10
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 20
+   },
+   {
+    "bReady": true,
+    "fbDelay.ET": 30
+   },
+   {
+    "bReady": true,
+    "fbDelay.ET": 30
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 10
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 20
+   },
+   {
+    "bReady": false,
+    "fbDelay.ET": 0
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 23.\n\nInitial values: bReady = FALSE.\n\nProgram (runs once per cycle):\n```\nfbDelay(IN := bSensor, PT := T#30MS);\nbReady := fbDelay.Q;\n```\n\nInputs per cycle:\n| cycle | bSensor |\n|---|---|\n| 1 | FALSE |\n| 2 | FALSE |\n| 3 | TRUE |\n| 4 | TRUE |\n| 5 | FALSE |\n| 6 | TRUE |\n| 7 | TRUE |\n| 8 | FALSE |\n| 9 | TRUE |\n| 10 | TRUE |\n| 11 | TRUE |\n| 12 | FALSE |\n| 13 | TRUE |\n| 14 | TRUE |\n| 15 | TRUE |\n| 16 | TRUE |\n| 17 | TRUE |\n| 18 | FALSE |\n| 19 | FALSE |\n| 20 | TRUE |\n| 21 | TRUE |\n| 22 | TRUE |\n| 23 | FALSE |\n\nOutputs to report: bReady, fbDelay.ET.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"bReady\": \"...\", \"fbDelay.ET\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 23, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "edge_inside_if_hard_1",
+  "family": "edge_inside_if",
+  "title": "R_TRIG instance called only inside an IF",
+  "scl": "IF bEnable THEN\n    fbEdge(CLK := bSensor);\n    IF fbEdge.Q THEN\n        nCount := nCount + 1;\n    END_IF;\nEND_IF;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bEnable": false,
+    "bSensor": false
+   },
+   {
+    "bEnable": false,
+    "bSensor": false
+   },
+   {
+    "bEnable": false,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": true
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": true
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": true
+   },
+   {
+    "bEnable": false,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": true
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": false
+   },
+   {
+    "bEnable": true,
+    "bSensor": true
+   }
+  ],
+  "outputs": [
+   "nCount"
+  ],
+  "initial": {
+   "nCount": 0
+  },
+  "trap": "The R_TRIG instance keeps its memory from the last cycle it was CALLED, not from the last cycle; while bEnable is FALSE it sees nothing.",
+  "expected": [
+   {
+    "nCount": 0
+   },
+   {
+    "nCount": 0
+   },
+   {
+    "nCount": 0
+   },
+   {
+    "nCount": 1
+   },
+   {
+    "nCount": 1
+   },
+   {
+    "nCount": 1
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 2
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 3
+   },
+   {
+    "nCount": 4
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 24.\n\nInitial values: nCount = 0.\n\nProgram (runs once per cycle):\n```\nIF bEnable THEN\n    fbEdge(CLK := bSensor);\n    IF fbEdge.Q THEN\n        nCount := nCount + 1;\n    END_IF;\nEND_IF;\n```\n\nInputs per cycle:\n| cycle | bEnable | bSensor |\n|---|---|---|\n| 1 | FALSE | FALSE |\n| 2 | FALSE | FALSE |\n| 3 | FALSE | FALSE |\n| 4 | TRUE | TRUE |\n| 5 | TRUE | FALSE |\n| 6 | TRUE | FALSE |\n| 7 | TRUE | TRUE |\n| 8 | TRUE | FALSE |\n| 9 | TRUE | FALSE |\n| 10 | FALSE | TRUE |\n| 11 | FALSE | TRUE |\n| 12 | FALSE | TRUE |\n| 13 | FALSE | TRUE |\n| 14 | TRUE | FALSE |\n| 15 | TRUE | FALSE |\n| 16 | TRUE | TRUE |\n| 17 | FALSE | TRUE |\n| 18 | FALSE | TRUE |\n| 19 | FALSE | TRUE |\n| 20 | FALSE | FALSE |\n| 21 | TRUE | TRUE |\n| 22 | TRUE | FALSE |\n| 23 | TRUE | FALSE |\n| 24 | TRUE | TRUE |\n\nOutputs to report: nCount.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"nCount\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 24, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "sr_rs_priority_hard_1",
+  "family": "sr_rs_priority",
+  "title": "SR versus RS when set and reset are TRUE together",
+  "scl": "fbSR(S1 := bSet, R := bReset);\nfbRS(S := bSet, R1 := bReset);\nbLampSR := fbSR.Q1;\nbLampRS := fbRS.Q1;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": true,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": false,
+    "bReset": false
+   },
+   {
+    "bSet": true,
+    "bReset": true
+   }
+  ],
+  "outputs": [
+   "bLampSR",
+   "bLampRS"
+  ],
+  "initial": {
+   "bLampSR": false,
+   "bLampRS": false
+  },
+  "trap": "SR is set dominant and RS is reset dominant; with both inputs TRUE the two latches disagree.",
+  "expected": [
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": true
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": true
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": true
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": true
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": true
+   },
+   {
+    "bLampSR": false,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   },
+   {
+    "bLampSR": true,
+    "bLampRS": false
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 24.\n\nInitial values: bLampSR = FALSE, bLampRS = FALSE.\n\nProgram (runs once per cycle):\n```\nfbSR(S1 := bSet, R := bReset);\nfbRS(S := bSet, R1 := bReset);\nbLampSR := fbSR.Q1;\nbLampRS := fbRS.Q1;\n```\n\nInputs per cycle:\n| cycle | bSet | bReset |\n|---|---|---|\n| 1 | TRUE | TRUE |\n| 2 | FALSE | FALSE |\n| 3 | FALSE | TRUE |\n| 4 | TRUE | TRUE |\n| 5 | FALSE | FALSE |\n| 6 | FALSE | FALSE |\n| 7 | FALSE | TRUE |\n| 8 | FALSE | TRUE |\n| 9 | TRUE | TRUE |\n| 10 | TRUE | FALSE |\n| 11 | FALSE | TRUE |\n| 12 | TRUE | TRUE |\n| 13 | FALSE | FALSE |\n| 14 | TRUE | FALSE |\n| 15 | FALSE | FALSE |\n| 16 | FALSE | TRUE |\n| 17 | TRUE | FALSE |\n| 18 | FALSE | FALSE |\n| 19 | FALSE | TRUE |\n| 20 | TRUE | TRUE |\n| 21 | TRUE | TRUE |\n| 22 | FALSE | FALSE |\n| 23 | FALSE | FALSE |\n| 24 | TRUE | TRUE |\n\nOutputs to report: bLampSR, bLampRS.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"bLampSR\": \"...\", \"bLampRS\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 24, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "statement_order_hard_1",
+  "family": "statement_order",
+  "title": "Reading and writing the same variable within one cycle",
+  "scl": "nOld := nVal;\nnVal := nVal + nStep;\nIF bReset THEN\n    nVal := 0;\nEND_IF;\nbHigh := nVal > 6;\nbAlarm := bHigh AND bHighPrev;\nbHighPrev := bHigh;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "nStep": 0,
+    "bReset": false
+   },
+   {
+    "nStep": 3,
+    "bReset": false
+   },
+   {
+    "nStep": 1,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": true
+   },
+   {
+    "nStep": 4,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": false
+   },
+   {
+    "nStep": 2,
+    "bReset": false
+   },
+   {
+    "nStep": 1,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": false
+   },
+   {
+    "nStep": 1,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": true
+   },
+   {
+    "nStep": 0,
+    "bReset": false
+   },
+   {
+    "nStep": 1,
+    "bReset": false
+   },
+   {
+    "nStep": 4,
+    "bReset": false
+   },
+   {
+    "nStep": 3,
+    "bReset": false
+   },
+   {
+    "nStep": 2,
+    "bReset": false
+   },
+   {
+    "nStep": 0,
+    "bReset": false
+   },
+   {
+    "nStep": 3,
+    "bReset": false
+   },
+   {
+    "nStep": 1,
+    "bReset": false
+   }
+  ],
+  "outputs": [
+   "nOld",
+   "nVal",
+   "bAlarm"
+  ],
+  "initial": {
+   "nVal": 0,
+   "nOld": 0,
+   "bHighPrev": false
+  },
+  "trap": "Statements run top to bottom: nOld reads nVal before it changes, the reset overwrites the addition, and bHighPrev still holds last cycle's value when bAlarm is computed.",
+  "expected": [
+   {
+    "nOld": 0,
+    "nVal": 0,
+    "bAlarm": false
+   },
+   {
+    "nOld": 0,
+    "nVal": 3,
+    "bAlarm": false
+   },
+   {
+    "nOld": 3,
+    "nVal": 4,
+    "bAlarm": false
+   },
+   {
+    "nOld": 4,
+    "nVal": 8,
+    "bAlarm": false
+   },
+   {
+    "nOld": 8,
+    "nVal": 0,
+    "bAlarm": false
+   },
+   {
+    "nOld": 0,
+    "nVal": 4,
+    "bAlarm": false
+   },
+   {
+    "nOld": 4,
+    "nVal": 8,
+    "bAlarm": false
+   },
+   {
+    "nOld": 8,
+    "nVal": 10,
+    "bAlarm": true
+   },
+   {
+    "nOld": 10,
+    "nVal": 11,
+    "bAlarm": true
+   },
+   {
+    "nOld": 11,
+    "nVal": 15,
+    "bAlarm": true
+   },
+   {
+    "nOld": 15,
+    "nVal": 16,
+    "bAlarm": true
+   },
+   {
+    "nOld": 16,
+    "nVal": 0,
+    "bAlarm": false
+   },
+   {
+    "nOld": 0,
+    "nVal": 0,
+    "bAlarm": false
+   },
+   {
+    "nOld": 0,
+    "nVal": 1,
+    "bAlarm": false
+   },
+   {
+    "nOld": 1,
+    "nVal": 5,
+    "bAlarm": false
+   },
+   {
+    "nOld": 5,
+    "nVal": 8,
+    "bAlarm": false
+   },
+   {
+    "nOld": 8,
+    "nVal": 10,
+    "bAlarm": true
+   },
+   {
+    "nOld": 10,
+    "nVal": 10,
+    "bAlarm": true
+   },
+   {
+    "nOld": 10,
+    "nVal": 13,
+    "bAlarm": true
+   },
+   {
+    "nOld": 13,
+    "nVal": 14,
+    "bAlarm": true
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 20.\n\nInitial values: nVal = 0, nOld = 0, bHighPrev = FALSE.\n\nProgram (runs once per cycle):\n```\nnOld := nVal;\nnVal := nVal + nStep;\nIF bReset THEN\n    nVal := 0;\nEND_IF;\nbHigh := nVal > 6;\nbAlarm := bHigh AND bHighPrev;\nbHighPrev := bHigh;\n```\n\nInputs per cycle:\n| cycle | nStep | bReset |\n|---|---|---|\n| 1 | 0 | FALSE |\n| 2 | 3 | FALSE |\n| 3 | 1 | FALSE |\n| 4 | 4 | FALSE |\n| 5 | 4 | TRUE |\n| 6 | 4 | FALSE |\n| 7 | 4 | FALSE |\n| 8 | 2 | FALSE |\n| 9 | 1 | FALSE |\n| 10 | 4 | FALSE |\n| 11 | 1 | FALSE |\n| 12 | 4 | TRUE |\n| 13 | 0 | FALSE |\n| 14 | 1 | FALSE |\n| 15 | 4 | FALSE |\n| 16 | 3 | FALSE |\n| 17 | 2 | FALSE |\n| 18 | 0 | FALSE |\n| 19 | 3 | FALSE |\n| 20 | 1 | FALSE |\n\nOutputs to report: nOld, nVal, bAlarm.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"nOld\": \"...\", \"nVal\": \"...\", \"bAlarm\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 20, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "ctu_edges_hard_1",
+  "family": "ctu_edges",
+  "title": "CTU counting parts that stay on the sensor for several cycles",
+  "scl": "fbCount(CU := bPart, R := bReset, PV := 4);\nnParts := fbCount.CV;\nbBoxFull := fbCount.Q;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": true
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": true
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   },
+   {
+    "bPart": true,
+    "bReset": false
+   },
+   {
+    "bPart": false,
+    "bReset": false
+   }
+  ],
+  "outputs": [
+   "nParts",
+   "bBoxFull"
+  ],
+  "initial": {
+   "nParts": 0,
+   "bBoxFull": false
+  },
+  "trap": "CTU counts rising edges of CU, not cycles where CU is TRUE; after a reset a CU that is still TRUE does not count again.",
+  "expected": [
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 0,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 1,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 2,
+    "bBoxFull": false
+   },
+   {
+    "nParts": 2,
+    "bBoxFull": false
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 24.\n\nInitial values: nParts = 0, bBoxFull = FALSE.\n\nProgram (runs once per cycle):\n```\nfbCount(CU := bPart, R := bReset, PV := 4);\nnParts := fbCount.CV;\nbBoxFull := fbCount.Q;\n```\n\nInputs per cycle:\n| cycle | bPart | bReset |\n|---|---|---|\n| 1 | FALSE | FALSE |\n| 2 | TRUE | FALSE |\n| 3 | TRUE | FALSE |\n| 4 | TRUE | FALSE |\n| 5 | TRUE | FALSE |\n| 6 | FALSE | FALSE |\n| 7 | FALSE | FALSE |\n| 8 | TRUE | TRUE |\n| 9 | TRUE | FALSE |\n| 10 | TRUE | FALSE |\n| 11 | TRUE | FALSE |\n| 12 | FALSE | FALSE |\n| 13 | FALSE | FALSE |\n| 14 | FALSE | FALSE |\n| 15 | TRUE | FALSE |\n| 16 | TRUE | FALSE |\n| 17 | TRUE | TRUE |\n| 18 | TRUE | FALSE |\n| 19 | FALSE | FALSE |\n| 20 | TRUE | FALSE |\n| 21 | FALSE | FALSE |\n| 22 | FALSE | FALSE |\n| 23 | TRUE | FALSE |\n| 24 | FALSE | FALSE |\n\nOutputs to report: nParts, bBoxFull.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"nParts\": \"...\", \"bBoxFull\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 24, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "step_chain_hard_1",
+  "family": "step_chain",
+  "title": "Step sequence (Schrittkette) with CASE",
+  "scl": "CASE nStep OF\n    0:  IF bStart THEN nStep := 10; END_IF;\n    10: IF bPartIn THEN nStep := 20; END_IF;\n    20: IF NOT bPartIn THEN nStep := 30; END_IF;\n    30: nStep := 0;\nEND_CASE;\nbConveyor := (nStep = 10) OR (nStep = 20);",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": true,
+    "bPartIn": true
+   },
+   {
+    "bStart": true,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": true,
+    "bPartIn": false
+   },
+   {
+    "bStart": true,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": true,
+    "bPartIn": true
+   },
+   {
+    "bStart": true,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": true,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": false
+   },
+   {
+    "bStart": false,
+    "bPartIn": true
+   },
+   {
+    "bStart": true,
+    "bPartIn": false
+   }
+  ],
+  "outputs": [
+   "nStep",
+   "bConveyor"
+  ],
+  "initial": {
+   "nStep": 0
+  },
+  "trap": "CASE runs exactly one branch per cycle, so a step can advance at most once per cycle even when several conditions are TRUE; outputs computed after the CASE already see the new step.",
+  "expected": [
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 30,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 30,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 0,
+    "bConveyor": false
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 10,
+    "bConveyor": true
+   },
+   {
+    "nStep": 20,
+    "bConveyor": true
+   },
+   {
+    "nStep": 30,
+    "bConveyor": false
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 24.\n\nInitial values: nStep = 0.\n\nProgram (runs once per cycle):\n```\nCASE nStep OF\n    0:  IF bStart THEN nStep := 10; END_IF;\n    10: IF bPartIn THEN nStep := 20; END_IF;\n    20: IF NOT bPartIn THEN nStep := 30; END_IF;\n    30: nStep := 0;\nEND_CASE;\nbConveyor := (nStep = 10) OR (nStep = 20);\n```\n\nInputs per cycle:\n| cycle | bStart | bPartIn |\n|---|---|---|\n| 1 | FALSE | FALSE |\n| 2 | FALSE | TRUE |\n| 3 | TRUE | TRUE |\n| 4 | TRUE | TRUE |\n| 5 | FALSE | TRUE |\n| 6 | FALSE | FALSE |\n| 7 | TRUE | FALSE |\n| 8 | TRUE | TRUE |\n| 9 | FALSE | FALSE |\n| 10 | FALSE | FALSE |\n| 11 | FALSE | FALSE |\n| 12 | FALSE | TRUE |\n| 13 | FALSE | TRUE |\n| 14 | TRUE | TRUE |\n| 15 | TRUE | TRUE |\n| 16 | FALSE | FALSE |\n| 17 | FALSE | FALSE |\n| 18 | FALSE | TRUE |\n| 19 | FALSE | TRUE |\n| 20 | FALSE | FALSE |\n| 21 | TRUE | FALSE |\n| 22 | FALSE | FALSE |\n| 23 | FALSE | TRUE |\n| 24 | TRUE | FALSE |\n\nOutputs to report: nStep, bConveyor.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"nStep\": \"...\", \"bConveyor\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 24, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "int_overflow_hard_1",
+  "family": "int_overflow",
+  "title": "Accumulating into a 16-bit INT",
+  "scl": "nTotal := nTotal + nIn;\nbNegative := nTotal < 0;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "nIn": 7500
+   },
+   {
+    "nIn": 12500
+   },
+   {
+    "nIn": 6000
+   },
+   {
+    "nIn": 9000
+   },
+   {
+    "nIn": 6000
+   },
+   {
+    "nIn": 11000
+   },
+   {
+    "nIn": 11000
+   },
+   {
+    "nIn": -3000
+   },
+   {
+    "nIn": 11000
+   },
+   {
+    "nIn": 7500
+   },
+   {
+    "nIn": -25000
+   },
+   {
+    "nIn": 11000
+   },
+   {
+    "nIn": 6000
+   },
+   {
+    "nIn": -14000
+   },
+   {
+    "nIn": 11000
+   },
+   {
+    "nIn": -14000
+   }
+  ],
+  "outputs": [
+   "nTotal",
+   "bNegative"
+  ],
+  "initial": {
+   "nTotal": 0
+  },
+  "trap": "INT is 16-bit; past 32767 it wraps to negative values instead of growing.",
+  "expected": [
+   {
+    "nTotal": 7500,
+    "bNegative": false
+   },
+   {
+    "nTotal": 20000,
+    "bNegative": false
+   },
+   {
+    "nTotal": 26000,
+    "bNegative": false
+   },
+   {
+    "nTotal": -30536,
+    "bNegative": true
+   },
+   {
+    "nTotal": -24536,
+    "bNegative": true
+   },
+   {
+    "nTotal": -13536,
+    "bNegative": true
+   },
+   {
+    "nTotal": -2536,
+    "bNegative": true
+   },
+   {
+    "nTotal": -5536,
+    "bNegative": true
+   },
+   {
+    "nTotal": 5464,
+    "bNegative": false
+   },
+   {
+    "nTotal": 12964,
+    "bNegative": false
+   },
+   {
+    "nTotal": -12036,
+    "bNegative": true
+   },
+   {
+    "nTotal": -1036,
+    "bNegative": true
+   },
+   {
+    "nTotal": 4964,
+    "bNegative": false
+   },
+   {
+    "nTotal": -9036,
+    "bNegative": true
+   },
+   {
+    "nTotal": 1964,
+    "bNegative": false
+   },
+   {
+    "nTotal": -12036,
+    "bNegative": true
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 16.\n\nInitial values: nTotal = 0.\n\nProgram (runs once per cycle):\n```\nnTotal := nTotal + nIn;\nbNegative := nTotal < 0;\n```\n\nInputs per cycle:\n| cycle | nIn |\n|---|---|\n| 1 | 7500 |\n| 2 | 12500 |\n| 3 | 6000 |\n| 4 | 9000 |\n| 5 | 6000 |\n| 6 | 11000 |\n| 7 | 11000 |\n| 8 | -3000 |\n| 9 | 11000 |\n| 10 | 7500 |\n| 11 | -25000 |\n| 12 | 11000 |\n| 13 | 6000 |\n| 14 | -14000 |\n| 15 | 11000 |\n| 16 | -14000 |\n\nOutputs to report: nTotal, bNegative.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"nTotal\": \"...\", \"bNegative\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 16, in order. Use true/false for BOOL and integers for INT and TIME."
+ },
+ {
+  "task_id": "tof_restart_hard_1",
+  "family": "tof_restart",
+  "title": "Off-delay timer that is re-triggered while running",
+  "scl": "fbOff(IN := bRun, PT := T#30MS);\nbFan := fbOff.Q;",
+  "cycle_ms": 10,
+  "inputs": [
+   {
+    "bRun": false
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": true
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   },
+   {
+    "bRun": false
+   }
+  ],
+  "outputs": [
+   "bFan",
+   "fbOff.ET"
+  ],
+  "initial": {
+   "bFan": false
+  },
+  "trap": "TOF keeps Q TRUE for PT after IN falls; a new TRUE on IN during that time resets ET, so the delay starts again from the next falling edge.",
+  "expected": [
+   {
+    "bFan": false,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 10
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 10
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 20
+   },
+   {
+    "bFan": false,
+    "fbOff.ET": 30
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 10
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 0
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 10
+   },
+   {
+    "bFan": true,
+    "fbOff.ET": 20
+   },
+   {
+    "bFan": false,
+    "fbOff.ET": 30
+   },
+   {
+    "bFan": false,
+    "fbOff.ET": 30
+   }
+  ],
+  "prompt": "You are checking a PLC program written in Structured Text (SCL).\n\nExecution model (IEC 61131-3, cyclic task):\n- At the start of each cycle the inputs in the table are copied into the program. They do not change during the cycle.\n- The program runs once per cycle, top to bottom.\n- Report every output variable as its value AFTER the program finished that cycle.\n- Variables keep their value from one cycle to the next. Initial values are given below; any variable not listed starts at 0 or FALSE.\n- Cycle k starts at t = (k - 1) * 10 ms. A timer reads the clock when it is called. ET is the time since the cycle in which the timer started timing, capped at PT.\n- TON, TOF, R_TRIG, CTU, SR and RS behave as defined in IEC 61131-3. SR is set dominant, RS is reset dominant. CTU counts rising edges of CU.\n- INT is a 16-bit signed integer. Overflow wraps around (two's complement), there is no overflow error.\n- Times are reported as integers in milliseconds.\n\nCycle time: 10 ms. Number of cycles: 20.\n\nInitial values: bFan = FALSE.\n\nProgram (runs once per cycle):\n```\nfbOff(IN := bRun, PT := T#30MS);\nbFan := fbOff.Q;\n```\n\nInputs per cycle:\n| cycle | bRun |\n|---|---|\n| 1 | FALSE |\n| 2 | TRUE |\n| 3 | TRUE |\n| 4 | FALSE |\n| 5 | FALSE |\n| 6 | TRUE |\n| 7 | FALSE |\n| 8 | FALSE |\n| 9 | FALSE |\n| 10 | FALSE |\n| 11 | TRUE |\n| 12 | TRUE |\n| 13 | FALSE |\n| 14 | FALSE |\n| 15 | TRUE |\n| 16 | FALSE |\n| 17 | FALSE |\n| 18 | FALSE |\n| 19 | FALSE |\n| 20 | FALSE |\n\nOutputs to report: bFan, fbOff.ET.\n\nAnswer with JSON only, no explanation, in exactly this shape:\n{\"cycles\": [{\"cycle\": 1, \"bFan\": \"...\", \"fbOff.ET\": \"...\"}, ...]}\nGive one object per cycle, cycles 1 to 20, in order. Use true/false for BOOL and integers for INT and TIME."
+ }
+]
